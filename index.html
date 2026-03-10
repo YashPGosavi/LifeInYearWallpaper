@@ -285,8 +285,149 @@ color: var(–text-dim);
 letter-spacing: 0.06em;
 }
 
-/* divider */
-.divider { height: 1px; background: var(–border); margin: 0 -24px; }
+.install-btn {
+width: 100%;
+padding: 11px;
+background: transparent;
+color: var(–accent);
+border: 1px solid var(–border-light);
+border-radius: var(–radius-sm);
+font-family: ‘DM Mono’, monospace;
+font-size: 11px;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+cursor: pointer;
+transition: all 0.2s;
+}
+.install-btn:hover { border-color: var(–accent); background: var(–accent-glow); }
+
+/* ── MODAL ── */
+.modal-backdrop {
+display: none;
+position: fixed; inset: 0;
+background: rgba(0,0,0,0.75);
+backdrop-filter: blur(8px);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+padding: 24px;
+animation: fadeIn 0.2s ease;
+}
+.modal-backdrop.open { display: flex; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+.modal {
+background: #131315;
+border: 1px solid var(–border-light);
+border-radius: 20px;
+width: 100%;
+max-width: 520px;
+max-height: 88vh;
+overflow-y: auto;
+box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+animation: slideUp 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+.modal::-webkit-scrollbar { width: 4px; }
+.modal::-webkit-scrollbar-thumb { background: var(–border-light); border-radius: 4px; }
+@keyframes slideUp { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+.modal-header {
+padding: 24px 28px 20px;
+border-bottom: 1px solid var(–border);
+display: flex; justify-content: space-between; align-items: flex-start;
+position: sticky; top: 0; background: #131315; z-index: 2;
+}
+.modal-title { font-family: ‘Cormorant Garamond’, serif; font-size: 22px; font-weight: 300; color: var(–text); }
+.modal-sub { font-size: 10px; color: var(–text-muted); letter-spacing: 0.06em; margin-top: 4px; line-height: 1.5; }
+.modal-close {
+background: var(–border); border: none; color: var(–text-muted);
+width: 28px; height: 28px; border-radius: 50%;
+font-size: 14px; cursor: pointer; flex-shrink: 0; transition: background 0.15s;
+display: grid; place-items: center; margin-top: 2px;
+}
+.modal-close:hover { background: var(–border-light); color: var(–text); }
+
+.modal-body { padding: 24px 28px 28px; display: flex; flex-direction: column; gap: 24px; }
+
+/* OS tabs */
+.os-tabs { display: flex; gap: 0; border: 1px solid var(–border-light); border-radius: var(–radius-sm); overflow: hidden; }
+.os-tab {
+flex: 1; padding: 9px 12px; font-family: ‘DM Mono’, monospace;
+font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+border: none; background: transparent; color: var(–text-muted); cursor: pointer;
+transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.os-tab.active { background: var(–accent); color: #0d0d0f; }
+.os-tab:not(.active):hover { background: var(–accent-glow); color: var(–text); }
+
+.os-panel { display: none; flex-direction: column; gap: 18px; }
+.os-panel.active { display: flex; }
+
+/* Steps */
+.step { display: flex; gap: 14px; }
+.step-num {
+width: 26px; height: 26px; border-radius: 6px;
+background: var(–accent); color: #0d0d0f;
+font-size: 11px; font-weight: 400;
+display: grid; place-items: center; flex-shrink: 0; margin-top: 1px;
+}
+.step-content { flex: 1; }
+.step-title { font-size: 13px; color: var(–text); font-family: ‘Cormorant Garamond’, serif; font-weight: 400; letter-spacing: 0.02em; margin-bottom: 6px; }
+.step-body { font-size: 10px; color: var(–text-muted); line-height: 1.7; letter-spacing: 0.04em; }
+.step-body strong { color: var(–text); font-weight: 400; }
+.step-body code {
+background: var(–border); padding: 1px 5px; border-radius: 3px;
+font-family: ‘DM Mono’, monospace; font-size: 9px; color: var(–accent);
+}
+
+/* Step inner box */
+.step-box {
+background: var(–bg); border: 1px solid var(–border);
+border-radius: var(–radius-sm); padding: 12px 14px; margin-top: 10px;
+display: flex; flex-direction: column; gap: 8px;
+}
+.step-box-row { font-size: 10px; color: var(–text-muted); line-height: 1.6; letter-spacing: 0.03em; }
+.step-box-row strong { color: var(–text); font-weight: 400; }
+
+/* URL copy row */
+.url-row {
+background: var(–bg); border: 1px solid var(–border-light);
+border-radius: var(–radius-sm); padding: 10px 12px;
+display: flex; align-items: center; gap: 10px; margin-top: 8px;
+}
+.url-text { font-size: 9px; color: var(–text-muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.03em; }
+.copy-btn {
+background: var(–border-light); border: none; color: var(–text);
+padding: 5px 10px; border-radius: 4px; font-size: 9px; letter-spacing: 0.08em;
+text-transform: uppercase; cursor: pointer; transition: all 0.15s; font-family: ‘DM Mono’, monospace;
+white-space: nowrap; flex-shrink: 0;
+}
+.copy-btn:hover { background: var(–accent); color: #0d0d0f; }
+.copy-btn.copied { background: #6bcb77; color: #0d0d0f; }
+
+/* Warning box */
+.warn-box {
+background: rgba(200,184,154,0.06); border: 1px solid rgba(200,184,154,0.18);
+border-radius: var(–radius-sm); padding: 12px 14px;
+font-size: 10px; color: #c8b89a; line-height: 1.65; letter-spacing: 0.03em;
+}
+.warn-box strong { font-weight: 400; color: #d9c9af; }
+
+/* Modal bottom nav */
+.modal-footer {
+padding: 16px 28px;
+border-top: 1px solid var(–border);
+display: flex; justify-content: space-between; align-items: center;
+}
+.modal-nav-btn {
+background: transparent; border: 1px solid var(–border-light);
+color: var(–text-muted); font-family: ‘DM Mono’, monospace; font-size: 10px;
+letter-spacing: 0.1em; text-transform: uppercase;
+padding: 8px 16px; border-radius: var(–radius-sm); cursor: pointer; transition: all 0.15s;
+}
+.modal-nav-btn:hover { border-color: var(–accent); color: var(–accent); }
+
+.divider-h { height: 1px; background: var(–border); }
 
 /* section */
 .section { display: flex; flex-direction: column; }
@@ -418,8 +559,9 @@ letter-spacing: 0.06em;
     </div>
   </div>
 
-  <div style="margin-top: auto; padding-top: 16px">
+  <div style="margin-top: auto; padding-top: 16px; display:flex; flex-direction:column; gap:8px">
     <button class="dl-btn" onclick="downloadWallpaper()">⬇ Download Wallpaper</button>
+    <button class="install-btn" onclick="openInstall()">⚡ Setup Auto-Update</button>
     <div class="size-hint" id="sizeHint">1179 × 2556 px · PNG</div>
   </div>
 
@@ -440,9 +582,278 @@ letter-spacing: 0.06em;
   </div>
 </main>
 
-<!-- Hidden full-res canvas for download -->
+<!-- ── INSTALL MODAL ── -->
 
-<canvas id="exportCanvas" style="display:none"></canvas>
+<div class="modal-backdrop" id="installModal" onclick="closeInstallOutside(event)">
+  <div class="modal" id="modalBox">
+
+```
+<div class="modal-header">
+  <div>
+    <div class="modal-title">Auto-Update Setup</div>
+    <div class="modal-sub">Automatically refresh your lock screen wallpaper every morning at 6 AM.</div>
+  </div>
+  <button class="modal-close" onclick="closeInstall()">✕</button>
+</div>
+
+<div class="modal-body">
+
+  <!-- OS Tabs -->
+  <div class="os-tabs">
+    <button class="os-tab active" id="tab-ios" onclick="switchOS('ios')">🍎 iOS (iPhone)</button>
+    <button class="os-tab" id="tab-android" onclick="switchOS('android')">🤖 Android</button>
+  </div>
+
+  <!-- ── iOS PANEL ── -->
+  <div class="os-panel active" id="panel-ios">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Save Your Wallpaper Settings</div>
+        <div class="step-body">
+          Your current settings are encoded in the URL below. This is what iOS Shortcuts will fetch daily — it auto-generates your wallpaper fresh every morning.
+        </div>
+        <div class="url-row">
+          <span class="url-text" id="iosUrl">—</span>
+          <button class="copy-btn" id="copyIosBtn" onclick="copyUrl('iosUrl','copyIosBtn')">Copy</button>
+        </div>
+        <div class="step-body" style="margin-top:8px; font-size:9px; opacity:0.7">
+          💡 To make this URL work, open the HTML file on a local server or host it on GitHub Pages / Vercel. The URL above will work when hosted.
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-h"></div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Create a Daily Automation</div>
+        <div class="step-body">Open the <strong>Shortcuts</strong> app on your iPhone:</div>
+        <div class="step-box">
+          <div class="step-box-row">→ Tap <strong>Automation</strong> tab at the bottom</div>
+          <div class="step-box-row">→ Tap <strong>+</strong> → <strong>New Automation</strong></div>
+          <div class="step-box-row">→ Choose <strong>Time of Day</strong> → set to <strong>6:00 AM</strong></div>
+          <div class="step-box-row">→ Set Repeat to <strong>Daily</strong></div>
+          <div class="step-box-row">→ Select <strong>"Run Immediately"</strong> (no confirmation)</div>
+          <div class="step-box-row">→ Tap <strong>"Create New Shortcut"</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-h"></div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Add Shortcut Actions</div>
+        <div class="step-body">Inside the new shortcut editor, add these two actions in order:</div>
+        <div class="step-box">
+          <div class="step-box-row"><strong>3.1</strong> Search for <strong>"Get Contents of URL"</strong></div>
+          <div class="step-box-row" style="padding-left:14px">→ Paste the URL you copied in step 1</div>
+          <div class="step-box-row" style="margin-top:6px"><strong>3.2</strong> Search for <strong>"Set Wallpaper Photo"</strong></div>
+          <div class="step-box-row" style="padding-left:14px">→ Choose <strong>Lock Screen</strong></div>
+        </div>
+        <div class="warn-box" style="margin-top:10px">
+          <strong>⚠ Important:</strong> In "Set Wallpaper Photo", tap the arrow <code>→</code> to expand options → disable both <strong>"Crop to Subject"</strong> and <strong>"Show Preview"</strong>. This prevents iOS from cropping or asking for confirmation every day.
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-h"></div>
+
+    <div class="step">
+      <div class="step-num">✓</div>
+      <div class="step-content">
+        <div class="step-title">Done!</div>
+        <div class="step-body">Your wallpaper will now auto-update every morning at 6 AM with fresh progress data. Test it by tapping <strong>▶ Run</strong> in the Shortcuts app.</div>
+      </div>
+    </div>
+
+  </div><!-- /ios -->
+
+  <!-- ── ANDROID PANEL ── -->
+  <div class="os-panel" id="panel-android">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Save Your Settings URL</div>
+        <div class="step-body">MacroDroid will fetch this URL daily to generate your wallpaper image.</div>
+        <div class="url-row">
+          <span class="url-text" id="androidUrl">—</span>
+          <button class="copy-btn" id="copyAndroidBtn" onclick="copyUrl('androidUrl','copyAndroidBtn')">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-h"></div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Install MacroDroid</div>
+        <div class="step-body">Download <strong>MacroDroid</strong> from the Google Play Store. It's free and lets you automate wallpaper changes on a schedule.</div>
+      </div>
+    </div>
+
+    <div class="divider-h"></div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Create a Macro</div>
+        <div class="step-body">Open MacroDroid → tap <strong>Add Macro</strong></div>
+        <div class="step-box">
+          <div class="step-box-row"><strong>Trigger:</strong> Date/Time → Day/Time → <strong>00:01:00</strong></div>
+          <div class="step-box-row">→ Enable all weekdays</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-h"></div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Configure Two Actions</div>
+        <div class="step-box">
+          <div class="step-box-row"><strong>4.1 Download Image</strong></div>
+          <div class="step-box-row" style="padding-left:12px">Web Interactions → <strong>HTTP Request</strong></div>
+          <div class="step-box-row" style="padding-left:12px">Method: <code>GET</code> · Paste the copied URL</div>
+          <div class="step-box-row" style="padding-left:12px">✓ Enable <strong>"Block next actions until complete"</strong></div>
+          <div class="step-box-row" style="padding-left:12px">✓ Tick <strong>"Save HTTP response to file"</strong></div>
+          <div class="step-box-row" style="padding-left:12px">Filename: <code>/Download/mindful.png</code></div>
+        </div>
+        <div class="step-box" style="margin-top:8px">
+          <div class="step-box-row"><strong>4.2 Set Wallpaper</strong></div>
+          <div class="step-box-row" style="padding-left:12px">Device Settings → <strong>Set Wallpaper</strong></div>
+          <div class="step-box-row" style="padding-left:12px">Enter same filename: <code>/Download/mindful.png</code></div>
+          <div class="step-box-row" style="padding-left:12px">Choose <strong>Lock Screen</strong></div>
+        </div>
+        <div class="warn-box" style="margin-top:10px">
+          <strong>⚠ Important:</strong> Use the exact same folder and filename in both actions, otherwise the wallpaper won't update.
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-h"></div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Finalize & Test</div>
+        <div class="step-body">
+          Give your macro a name → tap <strong>Create Macro</strong>.<br><br>
+          To test: MacroDroid → Macros → select your macro → <strong>More options → Test macro</strong>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /android -->
+
+</div><!-- /modal-body -->
+
+<div class="modal-footer">
+  <span style="font-size:9px; color:var(--text-dim); letter-spacing:0.06em">Updates daily at 6:00 AM</span>
+  <button class="modal-nav-btn" onclick="closeInstall()">Close</button>
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+// ── MODAL ──
+function openInstall() {
+  document.getElementById('installModal').classList.add('open');
+  updateInstallUrls();
+}
+function closeInstall() {
+  document.getElementById('installModal').classList.remove('open');
+}
+function closeInstallOutside(e) {
+  if (e.target === document.getElementById('installModal')) closeInstall();
+}
+function switchOS(os) {
+  document.querySelectorAll('.os-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.os-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + os).classList.add('active');
+  document.getElementById('panel-' + os).classList.add('active');
+}
+
+// ── URL GENERATOR ──
+function buildWallpaperUrl() {
+  const base = window.location.href.split('?')[0];
+  const { w, h } = getExportDims();
+  const params = new URLSearchParams({
+    type: currentType,
+    theme: currentTheme,
+    w, h,
+  });
+  if (currentType === 'life') {
+    params.set('dob', document.getElementById('dob').value);
+    params.set('lifeExp', document.getElementById('lifeExp').value);
+  }
+  if (currentType === 'goal') {
+    params.set('goalDate', document.getElementById('goalDate').value);
+    params.set('goalTitle', document.getElementById('goalTitle').value);
+  }
+  return base + '?' + params.toString();
+}
+
+function updateInstallUrls() {
+  const url = buildWallpaperUrl();
+  document.getElementById('iosUrl').textContent = url;
+  document.getElementById('androidUrl').textContent = url;
+}
+
+function copyUrl(spanId, btnId) {
+  const url = document.getElementById(spanId).textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById(btnId);
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── READ URL PARAMS ON LOAD ──
+function applyUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('type')) {
+    const t = p.get('type');
+    const card = document.querySelector(`.type-card[data-type="${t}"]`);
+    if (card) setType(t, card);
+  }
+  if (p.get('theme')) {
+    const sw = document.querySelector(`.theme-swatch[data-theme="${p.get('theme')}"]`);
+    if (sw) setTheme(p.get('theme'), sw);
+  }
+  if (p.get('dob')) document.getElementById('dob').value = p.get('dob');
+  if (p.get('lifeExp')) {
+    document.getElementById('lifeExp').value = p.get('lifeExp');
+    document.getElementById('lifeExpVal').textContent = p.get('lifeExp');
+  }
+  if (p.get('goalDate')) document.getElementById('goalDate').value = p.get('goalDate');
+  if (p.get('goalTitle')) document.getElementById('goalTitle').value = p.get('goalTitle');
+  if (p.get('w') && p.get('h')) {
+    const sel = document.getElementById('exportSize');
+    const val = `${p.get('w')}x${p.get('h')}`;
+    for (let opt of sel.options) { if (opt.value === val) { sel.value = val; break; } }
+  }
+}
+
+// Override DOMContentLoaded to also apply URL params
+const _origLoad = window.onload;
+window.addEventListener('DOMContentLoaded', () => {
+  applyUrlParams();
+});
+
+// Keyboard shortcut to close modal
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInstall(); });
+</script>
 
 <script>
 // ── STATE ──
