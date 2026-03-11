@@ -333,7 +333,7 @@ function drawLifeCalendar(ctx, W, H, T, now, portrait) {
     titleY + W * (portrait ? 0.055 : 0.038),
   );
 
-  const gridTop = portrait ? H * 0.18 : H * 0.26;
+  const gridTop = portrait ? H * 0.38 : H * 0.30;
   const gridBot = portrait ? H * 0.88 : H * 0.82;
   const gridH = gridBot - gridTop,
     gridW = W - pad * 2;
@@ -426,7 +426,7 @@ function drawYearCalendar(ctx, W, H, T, now, portrait) {
     titleY + W * (portrait ? 0.055 : 0.038),
   );
 
-  const gridTop = portrait ? H * 0.17 : H * 0.26;
+  const gridTop = portrait ? H * 0.38 : H * 0.30;
   const gridBot = portrait ? H * 0.9 : H * 0.83;
   const gridW = W - pad * 2,
     gridH = gridBot - gridTop;
