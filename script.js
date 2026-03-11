@@ -117,11 +117,41 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 300);
   }
 
+  // VIEW MODE — skip UI
   if (p.get("view") === "1") {
-    setTimeout(() => {
-      render();
-      downloadWallpaper("view");
-    }, 200);
+    applyUrlParams();
+
+    const { w, h } = getExportDims();
+    const portrait = !["mac", "windows"].includes(currentDevice);
+
+    const exp = document.getElementById("exportCanvas");
+    exp.width = w;
+    exp.height = h;
+
+    drawWallpaper(exp.getContext("2d"), w, h, true, portrait);
+
+    const img = new Image();
+    img.src = exp.toDataURL("image/png");
+
+    document.body.innerHTML = "";
+    document.body.style.margin = "0";
+    document.body.style.background = "#000";
+    document.body.style.display = "flex";
+    document.body.style.alignItems = "center";
+    document.body.style.justifyContent = "center";
+    document.body.style.height = "100vh";
+
+    document.body.appendChild(img);
+
+    img.style.width = "auto";
+    img.style.height = "auto";
+    img.style.maxWidth = "100%";
+    img.style.maxHeight = "100vh";
+    img.style.display = "block";
+    img.style.margin = "auto";
+
+    return;
+
   }
 });
 document.addEventListener("keydown", (e) => {
