@@ -108,6 +108,14 @@ window.addEventListener("DOMContentLoaded", () => {
   startCountdown();
   render();
   setInterval(render, 60000);
+
+  const p = new URLSearchParams(window.location.search);
+  if (p.get("download") === "1") {
+    setTimeout(() => {
+        render();
+        downloadWallpaper();
+    }, 300);
+  }
 });
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeInstall();
@@ -757,6 +765,7 @@ function buildWallpaperUrl() {
     theme: currentTheme,
     w,
     h,
+    download: 1
   });
   if (currentType === "life") {
     params.set("dob", document.getElementById("dob").value);
