@@ -111,25 +111,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
     drawWallpaper(canvas.getContext("2d"), w, h, true, portrait);
 
-    const img = new Image();
-    img.src = canvas.toDataURL("image/png");
+    const data = canvas.toDataURL("image/png");
 
-    document.body.innerHTML = "";
-    document.body.style.margin = "0";
-    document.body.style.background = "#000";
-    document.body.style.display = "flex";
-    document.body.style.alignItems = "center";
-    document.body.style.justifyContent = "center";
-    document.body.style.height = "100vh";
-
-    document.body.appendChild(img);
-
-    img.style.width = "auto";
-    img.style.height = "auto";
-    img.style.maxWidth = "100%";
-    img.style.height = "100vh";
-img.style.objectFit = "contain";
-    img.style.display = "block";
+    // Make the page become the image itself
+    document.open();
+    document.write(`<img src="${data}" style="margin:0;display:block;width:100vw;height:100vh;object-fit:contain;background:#000;">`);
+    document.close();
 
     return;
   }
@@ -791,9 +778,10 @@ function downloadWallpaper(mode = "download") {
     img.style.height = "auto";
     img.style.maxWidth = "100%";
     img.style.height = "100vh";
-img.style.objectFit = "contain";
+    img.style.objectFit = "contain";
     img.style.display = "block";
     img.style.margin = "auto";
+    window.location.replace(data);
 
     return;
   }
