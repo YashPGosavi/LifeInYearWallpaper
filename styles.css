@@ -884,6 +884,7 @@ main {
   margin-top: 1px;
 }
 .step-content {
+    overflow-wrap: break-word;
   flex: 1;
 }
 .step-title {
@@ -898,16 +899,19 @@ main {
   font-size: 10px;
   color: var(--text-muted);
   line-height: 1.7;
+  overflow-wrap: break-word;
   letter-spacing: 0.04em;
 }
 .step-body strong {
   color: var(--text);
+overflow-wrap: break-word;
   font-weight: 400;
 }
 .step-body code {
   background: var(--bg);
   padding: 1px 5px;
   border-radius: 3px;
+  overflow-wrap: break-word;
   font-size: 9px;
   color: var(--text);
   border: 1px solid var(--border);
@@ -918,6 +922,7 @@ main {
   border-radius: var(--radius-sm);
   padding: 12px 14px;
   margin-top: 10px;
+  overflow-wrap: break-word;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -926,9 +931,11 @@ main {
   font-size: 10px;
   color: var(--text-muted);
   line-height: 1.6;
+  overflow-wrap: break-word;
   letter-spacing: 0.03em;
 }
 .step-box-row strong {
+    overflow-wrap: break-word;
   color: var(--text);
   font-weight: 400;
 }
@@ -941,16 +948,23 @@ main {
   align-items: center;
   gap: 10px;
   margin-top: 8px;
+
+  flex-wrap: wrap;
 }
 .url-text {
   font-size: 9px;
   color: var(--text-muted);
   flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-wrap: allow;
   letter-spacing: 0.03em;
+
+  word-break: break-all;
+  overflow-wrap: anywhere;
 }
+
+.step-box {
+  max-width: 100%;
+}
+
 .copy-btn {
   background: var(--border);
   border: none;
@@ -963,7 +977,7 @@ main {
   cursor: pointer;
   transition: all 0.15s;
   font-family: "DM Mono", monospace;
-  white-space: nowrap;
+
   flex-shrink: 0;
 }
 .copy-btn:hover {
