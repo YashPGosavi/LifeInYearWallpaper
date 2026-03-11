@@ -1,441 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mindful Wallpaper Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-–bg: #0d0d0f;
-–surface: #141416;
-–border: #1e1e22;
-–border-light: #2a2a30;
-–text: #e8e4dc;
-–text-muted: #6b6870;
-–text-dim: #3a3840;
-–accent: #c8b89a;
-–accent-glow: rgba(200,184,154,0.08);
-–pill-active: #c8b89a;
-–pill-text-active: #0d0d0f;
-–radius: 12px;
-–radius-sm: 7px;
-}
-
-html, body { height: 100%; background: var(–bg); color: var(–text); font-family: ‘DM Mono’, monospace; }
-
-body {
-display: grid;
-grid-template-columns: 380px 1fr;
-grid-template-rows: auto 1fr;
-min-height: 100vh;
-overflow: hidden;
-}
-
-/* ── HEADER ── */
-header {
-grid-column: 1 / -1;
-padding: 22px 32px;
-border-bottom: 1px solid var(–border);
-display: flex;
-align-items: center;
-justify-content: space-between;
-background: var(–bg);
-position: relative;
-z-index: 10;
-}
-.logo { display: flex; align-items: baseline; gap: 10px; }
-.logo-mark {
-width: 26px; height: 26px;
-background: var(–accent);
-border-radius: 4px;
-display: grid;
-place-items: center;
-font-size: 12px;
-font-weight: 400;
-color: #0d0d0f;
-letter-spacing: -0.5px;
-flex-shrink: 0;
-}
-.logo h1 {
-font-family: ‘Cormorant Garamond’, serif;
-font-size: 19px;
-font-weight: 400;
-letter-spacing: 0.02em;
-color: var(–text);
-}
-.tagline {
-font-size: 10px;
-color: var(–text-muted);
-letter-spacing: 0.12em;
-text-transform: uppercase;
-}
-.now-badge {
-display: flex; align-items: center; gap: 8px;
-font-size: 10px; color: var(–text-muted);
-letter-spacing: 0.08em;
-}
-.pulse { width: 6px; height: 6px; border-radius: 50%; background: #6bcb77; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-/* ── SIDEBAR ── */
-aside {
-grid-row: 2;
-border-right: 1px solid var(–border);
-overflow-y: auto;
-padding: 28px 24px;
-display: flex;
-flex-direction: column;
-gap: 28px;
-background: var(–surface);
-}
-aside::-webkit-scrollbar { width: 4px; }
-aside::-webkit-scrollbar-track { background: transparent; }
-aside::-webkit-scrollbar-thumb { background: var(–border-light); border-radius: 4px; }
-
-.section-label {
-font-size: 9px;
-letter-spacing: 0.18em;
-text-transform: uppercase;
-color: var(–text-muted);
-margin-bottom: 12px;
-}
-
-/* Calendar type selector */
-.type-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
-.type-card {
-border: 1px solid var(–border-light);
-border-radius: var(–radius-sm);
-padding: 14px 16px;
-cursor: pointer;
-transition: all 0.2s;
-display: flex; align-items: center; gap: 14px;
-background: transparent;
-}
-.type-card:hover { border-color: var(–accent); background: var(–accent-glow); }
-.type-card.active { border-color: var(–accent); background: var(–accent-glow); }
-.type-icon {
-width: 34px; height: 34px;
-border-radius: 6px;
-background: var(–border);
-display: grid; place-items: center;
-font-size: 16px;
-flex-shrink: 0;
-}
-.type-card.active .type-icon { background: rgba(200,184,154,0.15); }
-.type-info {}
-.type-name { font-size: 12px; color: var(–text); letter-spacing: 0.04em; }
-.type-desc { font-size: 10px; color: var(–text-muted); margin-top: 2px; }
-
-/* Theme row */
-.theme-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.theme-swatch {
-width: 32px; height: 32px;
-border-radius: 50%;
-cursor: pointer;
-border: 2px solid transparent;
-transition: all 0.15s;
-position: relative;
-}
-.theme-swatch:hover { transform: scale(1.1); }
-.theme-swatch.active { border-color: var(–accent); }
-.theme-swatch.active::after {
-content: ‘✓’;
-position: absolute;
-inset: 0; display: grid; place-items: center;
-font-size: 11px; color: rgba(255,255,255,0.9);
-}
-
-/* Settings inputs */
-.field { display: flex; flex-direction: column; gap: 8px; }
-.field label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(–text-muted); }
-.field input, .field select {
-background: var(–bg);
-border: 1px solid var(–border-light);
-border-radius: var(–radius-sm);
-color: var(–text);
-font-family: ‘DM Mono’, monospace;
-font-size: 12px;
-padding: 9px 12px;
-outline: none;
-transition: border-color 0.2s;
-}
-.field input:focus, .field select:focus { border-color: var(–accent); }
-.field select option { background: #1a1a1e; }
-.field input[type=range] {
-padding: 0; height: 4px;
-accent-color: var(–accent);
-background: var(–border-light);
-border: none; border-radius: 4px; cursor: pointer;
-}
-.range-row { display: flex; justify-content: space-between; align-items: center; }
-.range-val { font-size: 11px; color: var(–accent); }
-
-/* Toggles */
-.toggle-row { display: flex; justify-content: space-between; align-items: center; }
-.toggle-label { font-size: 11px; color: var(–text); }
-.toggle {
-width: 36px; height: 20px;
-background: var(–border-light);
-border-radius: 10px;
-cursor: pointer;
-position: relative;
-transition: background 0.2s;
-border: none;
-flex-shrink: 0;
-}
-.toggle.on { background: var(–accent); }
-.toggle::after {
-content: ‘’;
-width: 14px; height: 14px;
-background: white;
-border-radius: 50%;
-position: absolute;
-top: 3px; left: 3px;
-transition: left 0.2s;
-}
-.toggle.on::after { left: 19px; }
-
-/* Download button */
-.dl-btn {
-width: 100%;
-padding: 13px;
-background: var(–accent);
-color: #0d0d0f;
-border: none;
-border-radius: var(–radius-sm);
-font-family: ‘DM Mono’, monospace;
-font-size: 11px;
-letter-spacing: 0.12em;
-text-transform: uppercase;
-cursor: pointer;
-transition: all 0.2s;
-margin-top: auto;
-}
-.dl-btn:hover { background: #d9c9af; transform: translateY(-1px); }
-.dl-btn:active { transform: translateY(0); }
-
-.size-hint { font-size: 9px; color: var(–text-dim); text-align: center; margin-top: 6px; letter-spacing: 0.06em; }
-
-/* ── PREVIEW AREA ── */
-main {
-grid-row: 2;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-padding: 32px;
-gap: 20px;
-overflow: hidden;
-background: radial-gradient(ellipse at 50% 60%, rgba(200,184,154,0.03) 0%, transparent 70%);
-}
-
-.phone-frame {
-position: relative;
-filter: drop-shadow(0 30px 60px rgba(0,0,0,0.7));
-transition: transform 0.3s ease;
-}
-.phone-frame:hover { transform: translateY(-4px); }
-.phone-bezel {
-width: 260px;
-height: 520px;
-border-radius: 38px;
-border: 6px solid #2a2a2e;
-background: #111;
-overflow: hidden;
-position: relative;
-box-shadow:
-inset 0 0 0 1px rgba(255,255,255,0.06),
-0 0 0 1px rgba(0,0,0,0.5);
-}
-.phone-notch {
-position: absolute;
-top: 10px; left: 50%; transform: translateX(-50%);
-width: 70px; height: 20px;
-background: #111;
-border-radius: 10px;
-z-index: 10;
-}
-.phone-canvas-wrap {
-width: 100%; height: 100%;
-overflow: hidden;
-border-radius: 32px;
-}
-#previewCanvas {
-width: 100%;
-height: 100%;
-display: block;
-image-rendering: -webkit-optimize-contrast;
-}
-
-.preview-meta {
-display: flex; gap: 20px; align-items: center;
-font-size: 10px; color: var(–text-muted); letter-spacing: 0.06em;
-}
-.preview-meta span { display: flex; align-items: center; gap: 5px; }
-
-/* auto-update counter */
-#countdown {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: var(–text-dim);
-letter-spacing: 0.06em;
-}
-
-.install-btn {
-width: 100%;
-padding: 11px;
-background: transparent;
-color: var(–accent);
-border: 1px solid var(–border-light);
-border-radius: var(–radius-sm);
-font-family: ‘DM Mono’, monospace;
-font-size: 11px;
-letter-spacing: 0.12em;
-text-transform: uppercase;
-cursor: pointer;
-transition: all 0.2s;
-}
-.install-btn:hover { border-color: var(–accent); background: var(–accent-glow); }
-
-/* ── MODAL ── */
-.modal-backdrop {
-display: none;
-position: fixed; inset: 0;
-background: rgba(0,0,0,0.75);
-backdrop-filter: blur(8px);
-z-index: 1000;
-align-items: center;
-justify-content: center;
-padding: 24px;
-animation: fadeIn 0.2s ease;
-}
-.modal-backdrop.open { display: flex; }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
-.modal {
-background: #131315;
-border: 1px solid var(–border-light);
-border-radius: 20px;
-width: 100%;
-max-width: 520px;
-max-height: 88vh;
-overflow-y: auto;
-box-shadow: 0 40px 100px rgba(0,0,0,0.7);
-animation: slideUp 0.25s cubic-bezier(0.34,1.56,0.64,1);
-}
-.modal::-webkit-scrollbar { width: 4px; }
-.modal::-webkit-scrollbar-thumb { background: var(–border-light); border-radius: 4px; }
-@keyframes slideUp { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
-
-.modal-header {
-padding: 24px 28px 20px;
-border-bottom: 1px solid var(–border);
-display: flex; justify-content: space-between; align-items: flex-start;
-position: sticky; top: 0; background: #131315; z-index: 2;
-}
-.modal-title { font-family: ‘Cormorant Garamond’, serif; font-size: 22px; font-weight: 300; color: var(–text); }
-.modal-sub { font-size: 10px; color: var(–text-muted); letter-spacing: 0.06em; margin-top: 4px; line-height: 1.5; }
-.modal-close {
-background: var(–border); border: none; color: var(–text-muted);
-width: 28px; height: 28px; border-radius: 50%;
-font-size: 14px; cursor: pointer; flex-shrink: 0; transition: background 0.15s;
-display: grid; place-items: center; margin-top: 2px;
-}
-.modal-close:hover { background: var(–border-light); color: var(–text); }
-
-.modal-body { padding: 24px 28px 28px; display: flex; flex-direction: column; gap: 24px; }
-
-/* OS tabs */
-.os-tabs { display: flex; gap: 0; border: 1px solid var(–border-light); border-radius: var(–radius-sm); overflow: hidden; }
-.os-tab {
-flex: 1; padding: 9px 12px; font-family: ‘DM Mono’, monospace;
-font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-border: none; background: transparent; color: var(–text-muted); cursor: pointer;
-transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 7px;
-}
-.os-tab.active { background: var(–accent); color: #0d0d0f; }
-.os-tab:not(.active):hover { background: var(–accent-glow); color: var(–text); }
-
-.os-panel { display: none; flex-direction: column; gap: 18px; }
-.os-panel.active { display: flex; }
-
-/* Steps */
-.step { display: flex; gap: 14px; }
-.step-num {
-width: 26px; height: 26px; border-radius: 6px;
-background: var(–accent); color: #0d0d0f;
-font-size: 11px; font-weight: 400;
-display: grid; place-items: center; flex-shrink: 0; margin-top: 1px;
-}
-.step-content { flex: 1; }
-.step-title { font-size: 13px; color: var(–text); font-family: ‘Cormorant Garamond’, serif; font-weight: 400; letter-spacing: 0.02em; margin-bottom: 6px; }
-.step-body { font-size: 10px; color: var(–text-muted); line-height: 1.7; letter-spacing: 0.04em; }
-.step-body strong { color: var(–text); font-weight: 400; }
-.step-body code {
-background: var(–border); padding: 1px 5px; border-radius: 3px;
-font-family: ‘DM Mono’, monospace; font-size: 9px; color: var(–accent);
-}
-
-/* Step inner box */
-.step-box {
-background: var(–bg); border: 1px solid var(–border);
-border-radius: var(–radius-sm); padding: 12px 14px; margin-top: 10px;
-display: flex; flex-direction: column; gap: 8px;
-}
-.step-box-row { font-size: 10px; color: var(–text-muted); line-height: 1.6; letter-spacing: 0.03em; }
-.step-box-row strong { color: var(–text); font-weight: 400; }
-
-/* URL copy row */
-.url-row {
-background: var(–bg); border: 1px solid var(–border-light);
-border-radius: var(–radius-sm); padding: 10px 12px;
-display: flex; align-items: center; gap: 10px; margin-top: 8px;
-}
-.url-text { font-size: 9px; color: var(–text-muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.03em; }
-.copy-btn {
-background: var(–border-light); border: none; color: var(–text);
-padding: 5px 10px; border-radius: 4px; font-size: 9px; letter-spacing: 0.08em;
-text-transform: uppercase; cursor: pointer; transition: all 0.15s; font-family: ‘DM Mono’, monospace;
-white-space: nowrap; flex-shrink: 0;
-}
-.copy-btn:hover { background: var(–accent); color: #0d0d0f; }
-.copy-btn.copied { background: #6bcb77; color: #0d0d0f; }
-
-/* Warning box */
-.warn-box {
-background: rgba(200,184,154,0.06); border: 1px solid rgba(200,184,154,0.18);
-border-radius: var(–radius-sm); padding: 12px 14px;
-font-size: 10px; color: #c8b89a; line-height: 1.65; letter-spacing: 0.03em;
-}
-.warn-box strong { font-weight: 400; color: #d9c9af; }
-
-/* Modal bottom nav */
-.modal-footer {
-padding: 16px 28px;
-border-top: 1px solid var(–border);
-display: flex; justify-content: space-between; align-items: center;
-}
-.modal-nav-btn {
-background: transparent; border: 1px solid var(–border-light);
-color: var(–text-muted); font-family: ‘DM Mono’, monospace; font-size: 10px;
-letter-spacing: 0.1em; text-transform: uppercase;
-padding: 8px 16px; border-radius: var(–radius-sm); cursor: pointer; transition: all 0.15s;
-}
-.modal-nav-btn:hover { border-color: var(–accent); color: var(–accent); }
-
-.divider-h { height: 1px; background: var(–border); }
-
-/* section */
-.section { display: flex; flex-direction: column; }
-</style>
-
+<link rel="stylesheet" href="styles.css">
+<script src="script.js" defer></script>
 </head>
 <body>
 
+<!-- ── HEADER ── -->
 <header>
   <div class="logo">
     <div class="logo-mark">m/</div>
@@ -448,6 +23,7 @@ padding: 8px 16px; border-radius: var(–radius-sm); cursor: pointer; transition
   </div>
 </header>
 
+<!-- ── SIDEBAR ── -->
 <aside>
 
   <div class="section">
@@ -455,24 +31,15 @@ padding: 8px 16px; border-radius: var(–radius-sm); cursor: pointer; transition
     <div class="type-grid">
       <div class="type-card active" data-type="life" onclick="setType('life',this)">
         <div class="type-icon">🌱</div>
-        <div class="type-info">
-          <div class="type-name">Life Calendar</div>
-          <div class="type-desc">Weeks of your life at a glance</div>
-        </div>
+        <div><div class="type-name">Life Calendar</div><div class="type-desc">Weeks of your life at a glance</div></div>
       </div>
       <div class="type-card" data-type="year" onclick="setType('year',this)">
         <div class="type-icon">📅</div>
-        <div class="type-info">
-          <div class="type-name">Year Calendar</div>
-          <div class="type-desc">Days remaining in the year</div>
-        </div>
+        <div><div class="type-name">Year Calendar</div><div class="type-desc">Days remaining in the year</div></div>
       </div>
       <div class="type-card" data-type="goal" onclick="setType('goal',this)">
         <div class="type-icon">🎯</div>
-        <div class="type-info">
-          <div class="type-name">Goal Calendar</div>
-          <div class="type-desc">Countdown to your deadline</div>
-        </div>
+        <div><div class="type-name">Goal Calendar</div><div class="type-desc">Countdown to your deadline</div></div>
       </div>
     </div>
   </div>
@@ -482,19 +49,35 @@ padding: 8px 16px; border-radius: var(–radius-sm); cursor: pointer; transition
   <div class="section">
     <div class="section-label">Theme</div>
     <div class="theme-row">
-      <div class="theme-swatch active" data-theme="dark"    style="background:linear-gradient(135deg,#0d0d0f,#1a1a22)" title="Obsidian" onclick="setTheme('dark',this)"></div>
-      <div class="theme-swatch"        data-theme="stone"   style="background:linear-gradient(135deg,#1c1810,#2e2416)" title="Stone"    onclick="setTheme('stone',this)"></div>
-      <div class="theme-swatch"        data-theme="fog"     style="background:linear-gradient(135deg,#e8e6e0,#d0cdc6)" title="Fog"      onclick="setTheme('fog',this)"></div>
-      <div class="theme-swatch"        data-theme="forest"  style="background:linear-gradient(135deg,#0e1a12,#1a2e1e)" title="Forest"   onclick="setTheme('forest',this)"></div>
-      <div class="theme-swatch"        data-theme="ocean"   style="background:linear-gradient(135deg,#0a1628,#0d2040)" title="Ocean"    onclick="setTheme('ocean',this)"></div>
-      <div class="theme-swatch"        data-theme="rose"    style="background:linear-gradient(135deg,#1a0e0e,#2a1414)" title="Rose"     onclick="setTheme('rose',this)"></div>
+      <div class="theme-swatch active" data-theme="dark"   style="background:linear-gradient(135deg,#0d0d0f,#1a1a22)" title="Obsidian" onclick="setTheme('dark',this)"></div>
+      <div class="theme-swatch"        data-theme="stone"  style="background:linear-gradient(135deg,#1c1810,#2e2416)" title="Stone"    onclick="setTheme('stone',this)"></div>
+      <div class="theme-swatch"        data-theme="fog"    style="background:linear-gradient(135deg,#e8e6e0,#d0cdc6)" title="Fog"      onclick="setTheme('fog',this)"></div>
+      <div class="theme-swatch"        data-theme="forest" style="background:linear-gradient(135deg,#0e1a12,#1a2e1e)" title="Forest"   onclick="setTheme('forest',this)"></div>
+      <div class="theme-swatch"        data-theme="ocean"  style="background:linear-gradient(135deg,#0a1628,#0d2040)" title="Ocean"    onclick="setTheme('ocean',this)"></div>
+      <div class="theme-swatch"        data-theme="rose"   style="background:linear-gradient(135deg,#1a0e0e,#2a1414)" title="Rose"     onclick="setTheme('rose',this)"></div>
+      <div class="theme-swatch"        data-theme="violet" style="background:linear-gradient(135deg,#12091e,#1e1030)" title="Violet"   onclick="setTheme('violet',this)"></div>
+      <div class="theme-swatch"        data-theme="gold"   style="background:linear-gradient(135deg,#1a1500,#2a2200)" title="Gold"     onclick="setTheme('gold',this)"></div>
+      <div class="custom-swatch" id="customSwatchBtn" title="Custom colour" onclick="activateCustom()">
+        <input type="color" id="customAccentPicker" value="#c8b89a" oninput="onCustomAccent(this.value)">
+      </div>
+    </div>
+    <div id="customPalette">
+      <div class="section-label" style="margin-top:14px;margin-bottom:10px">Custom Palette</div>
+      <div class="palette-row">
+        <div class="palette-item"><label>BG</label><input class="pal-input" type="color" id="cp_bg1"  value="#0b0b0d" oninput="applyCustomTheme()"></div>
+        <div class="palette-item"><label>BG2</label><input class="pal-input" type="color" id="cp_bg2" value="#141417" oninput="applyCustomTheme()"></div>
+        <div class="palette-item"><label>Grid</label><input class="pal-input" type="color" id="cp_grid" value="#232329" oninput="applyCustomTheme()"></div>
+        <div class="palette-item"><label>Fill</label><input class="pal-input" type="color" id="cp_fill" value="#d6c3a3" oninput="applyCustomTheme()"></div>
+        <div class="palette-item"><label>Text</label><input class="pal-input" type="color" id="cp_text" value="#f2eee7" oninput="applyCustomTheme()"></div>
+        <div class="palette-item"><label>Sub</label><input class="pal-input" type="color" id="cp_sub"  value="#7a7680" oninput="applyCustomTheme()"></div>
+        <div class="palette-item"><label>Empty</label><input class="pal-input" type="color" id="cp_empty" value="#1a1a1f" oninput="applyCustomTheme()"></div>
+      </div>
     </div>
   </div>
 
   <div class="divider"></div>
 
-  <!-- Life Calendar extras -->
-
+  <!-- Life Settings -->
   <div class="section" id="lifeSection">
     <div class="section-label">Life Settings</div>
     <div style="display:flex;flex-direction:column;gap:12px">
@@ -505,15 +88,14 @@ padding: 8px 16px; border-radius: var(–radius-sm); cursor: pointer; transition
       <div class="field">
         <label>Life Expectancy (years)</label>
         <div class="range-row">
-          <input type="range" id="lifeExp" min="60" max="100" value="80" oninput="document.getElementById('lifeExpVal').textContent=this.value;render()">
+          <input type="range" id="lifeExp" min="60" max="100" value="80" style="flex:1" oninput="document.getElementById('lifeExpVal').textContent=this.value;render()">
           <span class="range-val" id="lifeExpVal">80</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Year Calendar extras -->
-
+  <!-- Year Settings -->
   <div class="section" id="yearSection" style="display:none">
     <div class="section-label">Display Mode</div>
     <div style="display:flex;flex-direction:column;gap:10px">
@@ -525,21 +107,33 @@ padding: 8px 16px; border-radius: var(–radius-sm); cursor: pointer; transition
         <span class="toggle-label">Highlight today</span>
         <button class="toggle on" id="toggleToday" onclick="this.classList.toggle('on');render()"></button>
       </div>
+      <div class="field" style="margin-top:4px">
+        <label>View Mode</label>
+        <select id="yearMode" onchange="render()">
+          <option value="days">Days grid</option>
+          <option value="weeks">Weeks grid</option>
+        </select>
+      </div>
     </div>
   </div>
 
-  <!-- Goal Calendar extras -->
-
+  <!-- Goal Settings -->
   <div class="section" id="goalSection" style="display:none">
     <div class="section-label">Goal Settings</div>
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="field">
-        <label>Goal / Deadline Date</label>
-        <input type="date" id="goalDate" oninput="render()">
-      </div>
-      <div class="field">
         <label>Goal Title</label>
         <input type="text" id="goalTitle" value="Marathon" maxlength="24" oninput="render()">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field">
+          <label>Start Date</label>
+          <input type="date" id="goalStart" oninput="render()">
+        </div>
+        <div class="field">
+          <label>End Date</label>
+          <input type="date" id="goalDate" oninput="render()">
+        </div>
       </div>
     </div>
   </div>
@@ -552,14 +146,17 @@ padding: 8px 16px; border-radius: var(–radius-sm); cursor: pointer; transition
       <select id="exportSize" onchange="render()">
         <option value="1179x2556">iPhone 15 / 16 (1179×2556)</option>
         <option value="1290x2796">iPhone 15 Pro Max (1290×2796)</option>
-        <option value="1080x2340">Samsung (1080×2340)</option>
+        <option value="1080x2340">Samsung Galaxy (1080×2340)</option>
         <option value="1080x1920">Standard HD (1080×1920)</option>
         <option value="1170x2532">iPhone 13/14 (1170×2532)</option>
+        <option value="2560x1600">MacBook (2560×1600)</option>
+        <option value="1920x1080">Windows Desktop (1920×1080)</option>
+        <option value="3840x2160">4K Desktop (3840×2160)</option>
       </select>
     </div>
   </div>
 
-  <div style="margin-top: auto; padding-top: 16px; display:flex; flex-direction:column; gap:8px">
+  <div style="margin-top:auto;padding-top:16px;display:flex;flex-direction:column;gap:8px">
     <button class="dl-btn" onclick="downloadWallpaper()">⬇ Download Wallpaper</button>
     <button class="install-btn" onclick="openInstall()">⚡ Setup Auto-Update</button>
     <div class="size-hint" id="sizeHint">1179 × 2556 px · PNG</div>
@@ -567,789 +164,215 @@ padding: 8px 16px; border-radius: var(–radius-sm); cursor: pointer; transition
 
 </aside>
 
+<!-- ── MAIN ── -->
 <main>
-  <div class="phone-frame">
-    <div class="phone-bezel">
-      <div class="phone-notch"></div>
-      <div class="phone-canvas-wrap">
-        <canvas id="previewCanvas"></canvas>
-      </div>
+
+  <!-- Device Tab Bar -->
+  <div class="device-bar">
+    <button class="dev-tab active" data-dev="iphone" onclick="setDevice('iphone',this)">
+      <svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="12" y1="18.5" x2="12" y2="18.5" stroke-linecap="round" stroke-width="2.5"/></svg>
+      iPhone
+    </button>
+    <button class="dev-tab" data-dev="android" onclick="setDevice('android',this)">
+      <svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/></svg>
+      Android
+    </button>
+    <button class="dev-tab" data-dev="mac" onclick="setDevice('mac',this)">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg>
+      MacBook
+    </button>
+    <button class="dev-tab" data-dev="windows" onclick="setDevice('windows',this)">
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="1.5"/><path d="M8 21h8M12 17v4"/></svg>
+      Windows
+    </button>
+    <div class="bar-spacer"></div>
+    <div class="bar-meta">
+      <span id="countdown">—</span>
+      <span style="color:var(--text-dim)">·</span>
+      <span id="dimLabel">1179×2556</span>
     </div>
   </div>
-  <div class="preview-meta">
-    <span>🕐 <span id="countdown">updates in —</span></span>
-    <span>📐 <span id="dimLabel">1179×2556</span></span>
+
+  <!-- Preview Area -->
+  <div class="preview-area">
+
+    <!-- iPhone -->
+    <div class="device-frame" id="frame-iphone">
+      <div class="phone-bezel">
+        <div class="phone-notch"></div>
+        <div class="phone-canvas-wrap">
+          <canvas id="cvs-iphone" class="frame-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Android -->
+    <div class="device-frame" id="frame-android" style="display:none">
+      <div class="android-bezel">
+        <div class="android-hole"></div>
+        <div class="android-canvas-wrap">
+          <canvas id="cvs-android" class="frame-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- MacBook -->
+    <div class="device-frame" id="frame-mac" style="display:none">
+      <div class="mac-wrap">
+        <div class="mac-lid">
+          <div class="mac-screen-inner">
+            <div class="mac-camera"></div>
+            <canvas id="cvs-mac" class="frame-canvas"></canvas>
+          </div>
+        </div>
+        <div class="mac-hinge"></div>
+        <div class="mac-base"></div>
+        <div class="mac-foot"></div>
+      </div>
+    </div>
+
+    <!-- Windows -->
+    <div class="device-frame" id="frame-windows" style="display:none">
+      <div class="win-wrap">
+        <div class="win-bezel">
+          <div class="win-screen-inner">
+            <canvas id="cvs-windows" class="frame-canvas"></canvas>
+          </div>
+        </div>
+        <div class="win-neck"></div>
+        <div class="win-base"></div>
+      </div>
+    </div>
+
   </div>
 </main>
 
-<!-- ── INSTALL MODAL ── -->
+<canvas id="exportCanvas" style="display:none"></canvas>
 
+<!-- ── INSTALL MODAL ── -->
 <div class="modal-backdrop" id="installModal" onclick="closeInstallOutside(event)">
   <div class="modal" id="modalBox">
-
-```
-<div class="modal-header">
-  <div>
-    <div class="modal-title">Auto-Update Setup</div>
-    <div class="modal-sub">Automatically refresh your lock screen wallpaper every morning at 6 AM.</div>
-  </div>
-  <button class="modal-close" onclick="closeInstall()">✕</button>
-</div>
-
-<div class="modal-body">
-
-  <!-- OS Tabs -->
-  <div class="os-tabs">
-    <button class="os-tab active" id="tab-ios" onclick="switchOS('ios')">🍎 iOS (iPhone)</button>
-    <button class="os-tab" id="tab-android" onclick="switchOS('android')">🤖 Android</button>
-  </div>
-
-  <!-- ── iOS PANEL ── -->
-  <div class="os-panel active" id="panel-ios">
-
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-content">
-        <div class="step-title">Save Your Wallpaper Settings</div>
-        <div class="step-body">
-          Your current settings are encoded in the URL below. This is what iOS Shortcuts will fetch daily — it auto-generates your wallpaper fresh every morning.
-        </div>
-        <div class="url-row">
-          <span class="url-text" id="iosUrl">—</span>
-          <button class="copy-btn" id="copyIosBtn" onclick="copyUrl('iosUrl','copyIosBtn')">Copy</button>
-        </div>
-        <div class="step-body" style="margin-top:8px; font-size:9px; opacity:0.7">
-          💡 To make this URL work, open the HTML file on a local server or host it on GitHub Pages / Vercel. The URL above will work when hosted.
-        </div>
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Auto-Update Setup</div>
+        <div class="modal-sub">Automatically refresh your wallpaper every morning at 6 AM.</div>
       </div>
+      <button class="modal-close" onclick="closeInstall()">✕</button>
     </div>
+    <div class="modal-body">
 
-    <div class="divider-h"></div>
-
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-content">
-        <div class="step-title">Create a Daily Automation</div>
-        <div class="step-body">Open the <strong>Shortcuts</strong> app on your iPhone:</div>
-        <div class="step-box">
-          <div class="step-box-row">→ Tap <strong>Automation</strong> tab at the bottom</div>
-          <div class="step-box-row">→ Tap <strong>+</strong> → <strong>New Automation</strong></div>
-          <div class="step-box-row">→ Choose <strong>Time of Day</strong> → set to <strong>6:00 AM</strong></div>
-          <div class="step-box-row">→ Set Repeat to <strong>Daily</strong></div>
-          <div class="step-box-row">→ Select <strong>"Run Immediately"</strong> (no confirmation)</div>
-          <div class="step-box-row">→ Tap <strong>"Create New Shortcut"</strong></div>
-        </div>
+      <div class="os-tabs">
+        <button class="os-tab active"  id="tab-ios"     onclick="switchOS('ios')">🍎 iPhone</button>
+        <button class="os-tab"         id="tab-android" onclick="switchOS('android')">🤖 Android</button>
+        <button class="os-tab"         id="tab-mac"     onclick="switchOS('mac')">💻 macOS</button>
+        <button class="os-tab"         id="tab-win"     onclick="switchOS('win')">🪟 Windows</button>
       </div>
-    </div>
 
-    <div class="divider-h"></div>
-
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-content">
-        <div class="step-title">Add Shortcut Actions</div>
-        <div class="step-body">Inside the new shortcut editor, add these two actions in order:</div>
-        <div class="step-box">
-          <div class="step-box-row"><strong>3.1</strong> Search for <strong>"Get Contents of URL"</strong></div>
-          <div class="step-box-row" style="padding-left:14px">→ Paste the URL you copied in step 1</div>
-          <div class="step-box-row" style="margin-top:6px"><strong>3.2</strong> Search for <strong>"Set Wallpaper Photo"</strong></div>
-          <div class="step-box-row" style="padding-left:14px">→ Choose <strong>Lock Screen</strong></div>
-        </div>
-        <div class="warn-box" style="margin-top:10px">
-          <strong>⚠ Important:</strong> In "Set Wallpaper Photo", tap the arrow <code>→</code> to expand options → disable both <strong>"Crop to Subject"</strong> and <strong>"Show Preview"</strong>. This prevents iOS from cropping or asking for confirmation every day.
-        </div>
+      <!-- iOS -->
+      <div class="os-panel active" id="panel-ios">
+        <div class="step"><div class="step-num">1</div><div class="step-content">
+          <div class="step-title">Save Your Wallpaper Settings</div>
+          <div class="step-body">Your current settings are encoded in the URL below. iOS Shortcuts fetches this daily to generate a fresh wallpaper every morning.</div>
+          <div class="url-row"><span class="url-text" id="iosUrl">—</span><button class="copy-btn" id="copyIosBtn" onclick="copyUrl('iosUrl','copyIosBtn')">Copy</button></div>
+          <div class="step-body" style="margin-top:8px;font-size:9px;opacity:0.7">💡 Host the HTML on GitHub Pages or Vercel for this URL to work.</div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content">
+          <div class="step-title">Create a Daily Automation</div>
+          <div class="step-body">Open the <strong>Shortcuts</strong> app on your iPhone:</div>
+          <div class="step-box">
+            <div class="step-box-row">→ Tap <strong>Automation</strong> tab → <strong>+</strong> → <strong>New Automation</strong></div>
+            <div class="step-box-row">→ Choose <strong>Time of Day</strong> → <strong>6:00 AM</strong> · Repeat: <strong>Daily</strong></div>
+            <div class="step-box-row">→ Select <strong>"Run Immediately"</strong> (no confirmation)</div>
+          </div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content">
+          <div class="step-title">Add Two Actions</div>
+          <div class="step-box">
+            <div class="step-box-row"><strong>3.1</strong> Search <strong>"Get Contents of URL"</strong> → paste URL from step 1</div>
+            <div class="step-box-row"><strong>3.2</strong> Search <strong>"Set Wallpaper Photo"</strong> → choose <strong>Lock Screen</strong></div>
+          </div>
+          <div class="warn-box" style="margin-top:10px"><strong>⚠ Important:</strong> Expand options → disable <strong>"Crop to Subject"</strong> and <strong>"Show Preview"</strong>.</div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-content"><div class="step-title">Done!</div><div class="step-body">Test by tapping <strong>▶ Run</strong> in the Shortcuts app.</div></div></div>
       </div>
-    </div>
 
-    <div class="divider-h"></div>
-
-    <div class="step">
-      <div class="step-num">✓</div>
-      <div class="step-content">
-        <div class="step-title">Done!</div>
-        <div class="step-body">Your wallpaper will now auto-update every morning at 6 AM with fresh progress data. Test it by tapping <strong>▶ Run</strong> in the Shortcuts app.</div>
+      <!-- Android -->
+      <div class="os-panel" id="panel-android">
+        <div class="step"><div class="step-num">1</div><div class="step-content">
+          <div class="step-title">Save Your Settings URL</div>
+          <div class="url-row"><span class="url-text" id="androidUrl">—</span><button class="copy-btn" id="copyAndroidBtn" onclick="copyUrl('androidUrl','copyAndroidBtn')">Copy</button></div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Install MacroDroid</div><div class="step-body">Download <strong>MacroDroid</strong> (free) from the Google Play Store.</div></div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content">
+          <div class="step-title">Create a Macro</div>
+          <div class="step-box">
+            <div class="step-box-row"><strong>Trigger:</strong> Date/Time → Daily at <strong>00:01</strong></div>
+            <div class="step-box-row"><strong>Action 1:</strong> HTTP Request <code>GET</code> → save to <code>/Download/mindful.png</code></div>
+            <div class="step-box-row"><strong>Action 2:</strong> Set Wallpaper → same file → <strong>Lock Screen</strong></div>
+          </div>
+          <div class="warn-box" style="margin-top:10px"><strong>⚠ Important:</strong> Use identical filename in both actions.</div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-content"><div class="step-title">Test It</div><div class="step-body">Macros → select yours → <strong>More options → Test macro</strong>.</div></div></div>
       </div>
-    </div>
 
-  </div><!-- /ios -->
-
-  <!-- ── ANDROID PANEL ── -->
-  <div class="os-panel" id="panel-android">
-
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-content">
-        <div class="step-title">Save Your Settings URL</div>
-        <div class="step-body">MacroDroid will fetch this URL daily to generate your wallpaper image.</div>
-        <div class="url-row">
-          <span class="url-text" id="androidUrl">—</span>
-          <button class="copy-btn" id="copyAndroidBtn" onclick="copyUrl('androidUrl','copyAndroidBtn')">Copy</button>
-        </div>
+      <!-- macOS -->
+      <div class="os-panel" id="panel-mac">
+        <div class="step"><div class="step-num">1</div><div class="step-content">
+          <div class="step-title">Download Your Wallpaper</div>
+          <div class="step-body">Select <strong>MacBook (2560×1600)</strong> in export size, click <strong>⬇ Download</strong>. Then right-click the PNG → <strong>"Set Desktop Picture"</strong>.</div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content">
+          <div class="step-title">Daily Auto-Update via cron</div>
+          <div class="url-row"><span class="url-text" id="macUrl">—</span><button class="copy-btn" id="copyMacBtn" onclick="copyUrl('macUrl','copyMacBtn')">Copy URL</button></div>
+          <div class="step-box" style="margin-top:10px">
+            <div class="step-box-row">Paste into Terminal (replace <code>YOUR_URL</code>):</div>
+            <div class="step-box-row"><code>(crontab -l 2>/dev/null; echo "0 6 * * * curl -o ~/Pictures/mindful.png 'YOUR_URL' && osascript -e 'tell app \"Finder\" to set desktop picture to POSIX file \"'$HOME'/Pictures/mindful.png\"'") | crontab -</code></div>
+          </div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-content"><div class="step-title">All Set!</div><div class="step-body">macOS downloads and sets the wallpaper every morning at 6 AM.</div></div></div>
       </div>
-    </div>
 
-    <div class="divider-h"></div>
-
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-content">
-        <div class="step-title">Install MacroDroid</div>
-        <div class="step-body">Download <strong>MacroDroid</strong> from the Google Play Store. It's free and lets you automate wallpaper changes on a schedule.</div>
+      <!-- Windows -->
+      <div class="os-panel" id="panel-win">
+        <div class="step"><div class="step-num">1</div><div class="step-content">
+          <div class="step-title">Download Your Wallpaper</div>
+          <div class="step-body">Select <strong>Windows Desktop (1920×1080)</strong> or 4K, download, right-click PNG → <strong>"Set as desktop background"</strong>.</div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content">
+          <div class="step-title">PowerShell Auto-Update Script</div>
+          <div class="url-row"><span class="url-text" id="winUrl">—</span><button class="copy-btn" id="copyWinBtn" onclick="copyUrl('winUrl','copyWinBtn')">Copy URL</button></div>
+          <div class="step-box" style="margin-top:10px">
+            <div class="step-box-row">Save as <code>mindful.ps1</code> (replace <code>YOUR_URL</code>):</div>
+            <div class="step-box-row"><code>$url="YOUR_URL"; $out="$env:USERPROFILE\Pictures\mindful.png"; Invoke-WebRequest $url -OutFile $out; Set-ItemProperty -path 'HKCU:\Control Panel\Desktop' -name Wallpaper -value $out; RUNDLL32.EXE user32.dll,UpdatePerUserSystemParameters</code></div>
+          </div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content">
+          <div class="step-title">Schedule with Task Scheduler</div>
+          <div class="step-box">
+            <div class="step-box-row">Task Scheduler → Create Basic Task → Daily 6 AM</div>
+            <div class="step-box-row">Action: <code>powershell.exe -ExecutionPolicy Bypass -File "C:\path\mindful.ps1"</code></div>
+          </div>
+        </div></div>
+        <div class="divider-h"></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-content"><div class="step-title">All Done!</div><div class="step-body">Right-click the task → <strong>Run</strong> to test immediately.</div></div></div>
       </div>
+
     </div>
-
-    <div class="divider-h"></div>
-
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-content">
-        <div class="step-title">Create a Macro</div>
-        <div class="step-body">Open MacroDroid → tap <strong>Add Macro</strong></div>
-        <div class="step-box">
-          <div class="step-box-row"><strong>Trigger:</strong> Date/Time → Day/Time → <strong>00:01:00</strong></div>
-          <div class="step-box-row">→ Enable all weekdays</div>
-        </div>
-      </div>
+    <div class="modal-footer">
+      <span style="font-size:9px;color:var(--text-muted);letter-spacing:0.06em">Updates daily at 6:00 AM</span>
+      <button class="modal-nav-btn" onclick="closeInstall()">Close</button>
     </div>
-
-    <div class="divider-h"></div>
-
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-content">
-        <div class="step-title">Configure Two Actions</div>
-        <div class="step-box">
-          <div class="step-box-row"><strong>4.1 Download Image</strong></div>
-          <div class="step-box-row" style="padding-left:12px">Web Interactions → <strong>HTTP Request</strong></div>
-          <div class="step-box-row" style="padding-left:12px">Method: <code>GET</code> · Paste the copied URL</div>
-          <div class="step-box-row" style="padding-left:12px">✓ Enable <strong>"Block next actions until complete"</strong></div>
-          <div class="step-box-row" style="padding-left:12px">✓ Tick <strong>"Save HTTP response to file"</strong></div>
-          <div class="step-box-row" style="padding-left:12px">Filename: <code>/Download/mindful.png</code></div>
-        </div>
-        <div class="step-box" style="margin-top:8px">
-          <div class="step-box-row"><strong>4.2 Set Wallpaper</strong></div>
-          <div class="step-box-row" style="padding-left:12px">Device Settings → <strong>Set Wallpaper</strong></div>
-          <div class="step-box-row" style="padding-left:12px">Enter same filename: <code>/Download/mindful.png</code></div>
-          <div class="step-box-row" style="padding-left:12px">Choose <strong>Lock Screen</strong></div>
-        </div>
-        <div class="warn-box" style="margin-top:10px">
-          <strong>⚠ Important:</strong> Use the exact same folder and filename in both actions, otherwise the wallpaper won't update.
-        </div>
-      </div>
-    </div>
-
-    <div class="divider-h"></div>
-
-    <div class="step">
-      <div class="step-num">5</div>
-      <div class="step-content">
-        <div class="step-title">Finalize & Test</div>
-        <div class="step-body">
-          Give your macro a name → tap <strong>Create Macro</strong>.<br><br>
-          To test: MacroDroid → Macros → select your macro → <strong>More options → Test macro</strong>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /android -->
-
-</div><!-- /modal-body -->
-
-<div class="modal-footer">
-  <span style="font-size:9px; color:var(--text-dim); letter-spacing:0.06em">Updates daily at 6:00 AM</span>
-  <button class="modal-nav-btn" onclick="closeInstall()">Close</button>
-</div>
-```
-
   </div>
 </div>
-
-<script>
-// ── MODAL ──
-function openInstall() {
-  document.getElementById('installModal').classList.add('open');
-  updateInstallUrls();
-}
-function closeInstall() {
-  document.getElementById('installModal').classList.remove('open');
-}
-function closeInstallOutside(e) {
-  if (e.target === document.getElementById('installModal')) closeInstall();
-}
-function switchOS(os) {
-  document.querySelectorAll('.os-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.os-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + os).classList.add('active');
-  document.getElementById('panel-' + os).classList.add('active');
-}
-
-// ── URL GENERATOR ──
-function buildWallpaperUrl() {
-  const base = window.location.href.split('?')[0];
-  const { w, h } = getExportDims();
-  const params = new URLSearchParams({
-    type: currentType,
-    theme: currentTheme,
-    w, h,
-  });
-  if (currentType === 'life') {
-    params.set('dob', document.getElementById('dob').value);
-    params.set('lifeExp', document.getElementById('lifeExp').value);
-  }
-  if (currentType === 'goal') {
-    params.set('goalDate', document.getElementById('goalDate').value);
-    params.set('goalTitle', document.getElementById('goalTitle').value);
-  }
-  return base + '?' + params.toString();
-}
-
-function updateInstallUrls() {
-  const url = buildWallpaperUrl();
-  document.getElementById('iosUrl').textContent = url;
-  document.getElementById('androidUrl').textContent = url;
-}
-
-function copyUrl(spanId, btnId) {
-  const url = document.getElementById(spanId).textContent;
-  navigator.clipboard.writeText(url).then(() => {
-    const btn = document.getElementById(btnId);
-    btn.textContent = 'Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
-  });
-}
-
-// ── READ URL PARAMS ON LOAD ──
-function applyUrlParams() {
-  const p = new URLSearchParams(window.location.search);
-  if (p.get('type')) {
-    const t = p.get('type');
-    const card = document.querySelector(`.type-card[data-type="${t}"]`);
-    if (card) setType(t, card);
-  }
-  if (p.get('theme')) {
-    const sw = document.querySelector(`.theme-swatch[data-theme="${p.get('theme')}"]`);
-    if (sw) setTheme(p.get('theme'), sw);
-  }
-  if (p.get('dob')) document.getElementById('dob').value = p.get('dob');
-  if (p.get('lifeExp')) {
-    document.getElementById('lifeExp').value = p.get('lifeExp');
-    document.getElementById('lifeExpVal').textContent = p.get('lifeExp');
-  }
-  if (p.get('goalDate')) document.getElementById('goalDate').value = p.get('goalDate');
-  if (p.get('goalTitle')) document.getElementById('goalTitle').value = p.get('goalTitle');
-  if (p.get('w') && p.get('h')) {
-    const sel = document.getElementById('exportSize');
-    const val = `${p.get('w')}x${p.get('h')}`;
-    for (let opt of sel.options) { if (opt.value === val) { sel.value = val; break; } }
-  }
-}
-
-// Override DOMContentLoaded to also apply URL params
-const _origLoad = window.onload;
-window.addEventListener('DOMContentLoaded', () => {
-  applyUrlParams();
-});
-
-// Keyboard shortcut to close modal
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInstall(); });
-</script>
-
-<script>
-// ── STATE ──
-let currentType = 'life';
-let currentTheme = 'dark';
-
-const THEMES = {
-  dark:   { bg1:'#0d0d0f', bg2:'#141418', grid:'#1e1e26', fill:'#c8b89a', text:'#e8e4dc', sub:'#6b6870', empty:'#1a1a20' },
-  stone:  { bg1:'#1c1810', bg2:'#231e12', grid:'#2e2416', fill:'#d4a96a', text:'#e8dcc8', sub:'#8a7a5a', empty:'#201c10' },
-  fog:    { bg1:'#e8e6e0', bg2:'#dddad3', grid:'#c8c5be', fill:'#3a3835', text:'#1a1816', sub:'#8a8780', empty:'#d0cdc6' },
-  forest: { bg1:'#0e1a12', bg2:'#111e15', grid:'#1a2e1e', fill:'#6bcb77', text:'#c8e8cc', sub:'#4a7050', empty:'#141e16' },
-  ocean:  { bg1:'#0a1628', bg2:'#0d1e38', grid:'#142040', fill:'#5ab4e4', text:'#c8e4f8', sub:'#3a6880', empty:'#0e1c34' },
-  rose:   { bg1:'#1a0e0e', bg2:'#221212', grid:'#2a1818', fill:'#e4847a', text:'#f0d0cc', sub:'#7a4a48', empty:'#1e1010' },
-};
-
-// ── INIT ──
-window.addEventListener('DOMContentLoaded', () => {
-  // Set default goal date to 3 months from now
-  const d = new Date(); d.setMonth(d.getMonth() + 3);
-  document.getElementById('goalDate').value = d.toISOString().split('T')[0];
-  
-  startClock();
-  startCountdown();
-  render();
-  setInterval(render, 60000); // re-render every minute
-});
-
-// ── CLOCK ──
-function startClock() {
-  function tick() {
-    const n = new Date();
-    document.getElementById('liveTime').textContent =
-      n.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-  }
-  tick(); setInterval(tick, 1000);
-}
-
-// ── COUNTDOWN ──
-function startCountdown() {
-  function tick() {
-    const n = new Date();
-    const next = new Date(n);
-    next.setHours(6, 0, 0, 0);
-    if (next <= n) next.setDate(next.getDate() + 1);
-    const diff = Math.floor((next - n) / 1000);
-    const h = String(Math.floor(diff / 3600)).padStart(2,'0');
-    const m = String(Math.floor((diff % 3600) / 60)).padStart(2,'0');
-    const s = String(diff % 60).padStart(2,'0');
-    document.getElementById('countdown').textContent = `next update in ${h}:${m}:${s}`;
-  }
-  tick(); setInterval(tick, 1000);
-}
-
-// ── UI ──
-function setType(type, el) {
-  currentType = type;
-  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('lifeSection').style.display = type === 'life' ? '' : 'none';
-  document.getElementById('yearSection').style.display = type === 'year' ? '' : 'none';
-  document.getElementById('goalSection').style.display = type === 'goal' ? '' : 'none';
-  render();
-}
-
-function setTheme(theme, el) {
-  currentTheme = theme;
-  document.querySelectorAll('.theme-swatch').forEach(s => s.classList.remove('active'));
-  el.classList.add('active');
-  render();
-}
-
-function getExportDims() {
-  const val = document.getElementById('exportSize').value;
-  const [w, h] = val.split('x').map(Number);
-  return { w, h };
-}
-
-// ── RENDER ORCHESTRATOR ──
-function render() {
-  const { w, h } = getExportDims();
-  document.getElementById('dimLabel').textContent = `${w}×${h}`;
-  document.getElementById('sizeHint').textContent = `${w} × ${h} px · PNG`;
-
-  const preview = document.getElementById('previewCanvas');
-  // Preview at 2× for sharpness
-  preview.width = 520;
-  preview.height = 1040;
-  drawWallpaper(preview.getContext('2d'), preview.width, preview.height, false);
-
-  // Export canvas at full res
-  const exp = document.getElementById('exportCanvas');
-  exp.width = w; exp.height = h;
-  drawWallpaper(exp.getContext('2d'), w, h, true);
-}
-
-// ── MAIN DRAW FUNCTION ──
-function drawWallpaper(ctx, W, H, hires) {
-  const T = THEMES[currentTheme];
-  const now = new Date();
-
-  // Background gradient
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, T.bg1);
-  grad.addColorStop(1, T.bg2);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, H);
-
-  // Subtle noise texture
-  addNoise(ctx, W, H);
-
-  if (currentType === 'life')  drawLifeCalendar(ctx, W, H, T, now, hires);
-  if (currentType === 'year')  drawYearCalendar(ctx, W, H, T, now, hires);
-  if (currentType === 'goal')  drawGoalCalendar(ctx, W, H, T, now, hires);
-
-  drawTimestamp(ctx, W, H, T, now, hires);
-}
-
-// ── NOISE ──
-function addNoise(ctx, W, H) {
-  const img = ctx.createImageData(W, H);
-  const d = img.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const v = (Math.random() - 0.5) * 18;
-    d[i] = d[i+1] = d[i+2] = Math.max(0, Math.min(255, 128 + v));
-    d[i+3] = 8;
-  }
-  ctx.putImageData(img, 0, 0);
-}
-
-// ── DRAW: LIFE CALENDAR ──
-function drawLifeCalendar(ctx, W, H, T, now, hires) {
-  const dob = new Date(document.getElementById('dob').value || '1995-01-01');
-  const lifeYears = parseInt(document.getElementById('lifeExp').value);
-  const totalWeeks = lifeYears * 52;
-  
-  const weekLived = Math.floor((now - dob) / (7 * 24 * 3600 * 1000));
-  const pct = Math.min(1, weekLived / totalWeeks);
-
-  // Title area
-  const pad = W * 0.08;
-  const titleY = H * 0.1;
-  
-  ctx.fillStyle = T.text;
-  ctx.font = `300 ${W * 0.045}px 'Cormorant Garamond', serif`;
-  ctx.textAlign = 'center';
-  ctx.fillText('Life in Weeks', W / 2, titleY);
-  
-  ctx.fillStyle = T.sub;
-  ctx.font = `300 ${W * 0.026}px 'DM Mono', monospace`;
-  const age = ((now - dob) / (365.25 * 24 * 3600 * 1000)).toFixed(1);
-  ctx.fillText(`age ${age}  ·  ${weekLived.toLocaleString()} of ${totalWeeks.toLocaleString()} weeks`, W / 2, titleY + W * 0.055);
-
-  // Grid area
-  const gridTop = H * 0.18;
-  const gridBot = H * 0.88;
-  const gridH = gridBot - gridTop;
-  const gridW = W - pad * 2;
-
-  const cols = 52;
-  const rows = lifeYears;
-  const cellW = gridW / cols;
-  const cellH = gridH / rows;
-  const gap = Math.max(0.5, cellW * 0.12);
-  const r = Math.min(cellW, cellH) * 0.18;
-
-  ctx.save();
-  ctx.translate(pad, gridTop);
-
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const idx = row * cols + col;
-      const x = col * cellW + gap / 2;
-      const y = row * cellH + gap / 2;
-      const cw = cellW - gap;
-      const ch = cellH - gap;
-
-      let color;
-      if (idx < weekLived) {
-        // Lived weeks: gradient from accent to slightly lighter
-        const frac = idx / Math.max(1, weekLived);
-        color = lerpColor(T.fill, lighten(T.fill, 0.15), frac);
-      } else if (idx === weekLived) {
-        // Current week: bright accent
-        color = lighten(T.fill, 0.3);
-        // glow effect
-        ctx.save();
-        ctx.shadowColor = T.fill;
-        ctx.shadowBlur = cellW * 3;
-      } else {
-        color = T.empty;
-      }
-
-      roundRect(ctx, x, y, cw, ch, r);
-      ctx.fillStyle = color;
-      ctx.fill();
-
-      if (idx === weekLived) ctx.restore();
-    }
-  }
-  ctx.restore();
-
-  // Pct bar
-  const barY = H * 0.92;
-  const barH = H * 0.008;
-  const barW = W - pad * 2;
-  roundRect(ctx, pad, barY, barW, barH, barH / 2);
-  ctx.fillStyle = T.empty;
-  ctx.fill();
-  if (pct > 0) {
-    roundRect(ctx, pad, barY, barW * pct, barH, barH / 2);
-    ctx.fillStyle = T.fill;
-    ctx.fill();
-  }
-
-  ctx.fillStyle = T.sub;
-  ctx.font = `300 ${W * 0.022}px 'DM Mono', monospace`;
-  ctx.textAlign = 'left';
-  ctx.fillText(`${(pct * 100).toFixed(1)}% of life lived`, pad, barY + barH + W * 0.035);
-}
-
-// ── DRAW: YEAR CALENDAR ──
-function drawYearCalendar(ctx, W, H, T, now, hires) {
-  const showMonths = document.getElementById('toggleMonths').classList.contains('on');
-  const showToday = document.getElementById('toggleToday').classList.contains('on');
-
-  const year = now.getFullYear();
-  const isLeap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-  const totalDays = isLeap ? 366 : 365;
-  const dayOfYear = getDayOfYear(now);
-  const pct = dayOfYear / totalDays;
-
-  const pad = W * 0.08;
-  const titleY = H * 0.08;
-
-  ctx.fillStyle = T.text;
-  ctx.font = `300 ${W * 0.052}px 'Cormorant Garamond', serif`;
-  ctx.textAlign = 'center';
-  ctx.fillText(String(year), W / 2, titleY);
-
-  ctx.fillStyle = T.sub;
-  ctx.font = `300 ${W * 0.026}px 'DM Mono', monospace`;
-  const monthName = now.toLocaleString('default',{month:'long'});
-  ctx.fillText(`${monthName} ${now.getDate()}  ·  day ${dayOfYear}`, W / 2, titleY + W * 0.055);
-
-  const gridTop = H * 0.17;
-  const gridBot = H * 0.9;
-  const gridW = W - pad * 2;
-  const gridH = gridBot - gridTop;
-  const cols = 25;
-  const rows = Math.ceil(totalDays / cols);
-  const cellW = gridW / cols;
-  const cellH = gridH / rows;
-  const gap = cellW * 0.12;
-  const r = Math.min(cellW, cellH) * 0.22;
-
-  // Month separators
-  const MONTHS = [31,isLeap?29:28,31,30,31,30,31,31,30,31,30,31];
-
-  ctx.save();
-  ctx.translate(pad, gridTop);
-
-  let monthStart = 0;
-  const monthColors = {};
-  MONTHS.forEach((days, mi) => {
-    for (let d = 0; d < days; d++) monthColors[monthStart + d] = mi;
-    monthStart += days;
-  });
-
-  for (let i = 0; i < totalDays; i++) {
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    const x = col * cellW + gap / 2;
-    const y = row * cellH + gap / 2;
-    const cw = cellW - gap;
-    const ch = cellH - gap;
-
-    let color;
-    const mi = monthColors[i];
-    if (i < dayOfYear - 1) {
-      // Alternate slightly between months for rhythm
-      color = mi % 2 === 0 ? T.fill : lighten(T.fill, -0.1);
-    } else if (i === dayOfYear - 1 && showToday) {
-      color = lighten(T.fill, 0.35);
-      ctx.save();
-      ctx.shadowColor = T.fill;
-      ctx.shadowBlur = cellW * 2;
-    } else {
-      color = T.empty;
-    }
-
-    roundRect(ctx, x, y, cw, ch, r);
-    ctx.fillStyle = color;
-    ctx.fill();
-
-    if (i === dayOfYear - 1 && showToday) ctx.restore();
-  }
-
-  // Month labels
-  if (showMonths) {
-    const MNAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    let d = 0;
-    MONTHS.forEach((days, mi) => {
-      const col = d % cols;
-      const row = Math.floor(d / cols);
-      const x = col * cellW;
-      const y = row * cellH - cellH * 0.1;
-      if (y > 0) {
-        ctx.fillStyle = T.sub;
-        ctx.font = `300 ${cellW * 0.65}px 'DM Mono', monospace`;
-        ctx.textAlign = 'left';
-        ctx.fillText(MNAMES[mi], x, y);
-      }
-      d += days;
-    });
-  }
-
-  ctx.restore();
-
-  // Progress bar
-  const barY = H * 0.925;
-  const barH2 = H * 0.007;
-  const barW = W - pad * 2;
-  roundRect(ctx, pad, barY, barW, barH2, barH2 / 2);
-  ctx.fillStyle = T.empty; ctx.fill();
-  roundRect(ctx, pad, barY, barW * pct, barH2, barH2 / 2);
-  ctx.fillStyle = T.fill; ctx.fill();
-
-  ctx.fillStyle = T.sub;
-  ctx.font = `300 ${W * 0.022}px 'DM Mono', monospace`;
-  ctx.textAlign = 'left';
-  ctx.fillText(`${totalDays - dayOfYear} days remaining  ·  ${(pct*100).toFixed(1)}%`, pad, barY + barH2 + W * 0.035);
-}
-
-// ── DRAW: GOAL CALENDAR ──
-function drawGoalCalendar(ctx, W, H, T, now, hires) {
-  const goalDateVal = document.getElementById('goalDate').value;
-  const goalTitle = document.getElementById('goalTitle').value || 'Goal';
-  const goalDate = new Date(goalDateVal || Date.now() + 90 * 24 * 3600 * 1000);
-  goalDate.setHours(23, 59, 59);
-
-  const msLeft = goalDate - now;
-  const totalMs = goalDate - new Date(now.getFullYear(), now.getMonth(), now.getDate() - Math.ceil((goalDate - now) / (24 * 3600 * 1000)));
-  const daysLeft = Math.max(0, Math.ceil(msLeft / (24 * 3600 * 1000)));
-  const totalDays = Math.round((goalDate - new Date(now - msLeft * 1.2)) / (24 * 3600 * 1000));
-  const pct = Math.min(1, Math.max(0, 1 - daysLeft / Math.max(1, totalDays)));
-
-  const pad = W * 0.08;
-  const cx = W / 2;
-
-  // Title
-  ctx.fillStyle = T.sub;
-  ctx.font = `300 ${W * 0.026}px 'DM Mono', monospace`;
-  ctx.textAlign = 'center';
-  ctx.fillText('countdown to', cx, H * 0.1);
-
-  ctx.fillStyle = T.text;
-  ctx.font = `300 ${W * 0.055}px 'Cormorant Garamond', serif`;
-  ctx.fillText(goalTitle, cx, H * 0.1 + W * 0.065);
-
-  // Big number
-  ctx.font = `300 ${W * 0.22}px 'Cormorant Garamond', serif`;
-  ctx.fillStyle = T.fill;
-  ctx.fillText(daysLeft, cx, H * 0.38);
-
-  ctx.fillStyle = T.sub;
-  ctx.font = `300 ${W * 0.032}px 'DM Mono', monospace`;
-  ctx.fillText('days remaining', cx, H * 0.38 + W * 0.045);
-
-  // Deadline date
-  ctx.fillStyle = T.text;
-  ctx.font = `300 ${W * 0.026}px 'DM Mono', monospace`;
-  ctx.fillText(goalDate.toLocaleDateString('en', {month:'long',day:'numeric',year:'numeric'}), cx, H * 0.45);
-
-  // Radial progress ring
-  const ringY = H * 0.65;
-  const ringR = W * 0.3;
-  const ringW = W * 0.028;
-  const startAngle = -Math.PI / 2;
-  const endAngle = startAngle + 2 * Math.PI * pct;
-
-  // Background ring
-  ctx.beginPath();
-  ctx.arc(cx, ringY, ringR, 0, 2 * Math.PI);
-  ctx.strokeStyle = T.empty;
-  ctx.lineWidth = ringW;
-  ctx.stroke();
-
-  // Progress ring
-  if (pct > 0) {
-    ctx.beginPath();
-    ctx.arc(cx, ringY, ringR, startAngle, endAngle);
-    ctx.strokeStyle = T.fill;
-    ctx.lineWidth = ringW;
-    ctx.lineCap = 'round';
-    ctx.stroke();
-  }
-
-  // Center text
-  ctx.fillStyle = T.text;
-  ctx.font = `300 ${W * 0.038}px 'DM Mono', monospace`;
-  ctx.fillText(`${(pct * 100).toFixed(0)}%`, cx, ringY + W * 0.015);
-  ctx.fillStyle = T.sub;
-  ctx.font = `300 ${W * 0.02}px 'DM Mono', monospace`;
-  ctx.fillText('done', cx, ringY + W * 0.05);
-
-  // Day ticks around ring
-  const ticks = Math.min(totalDays, 120);
-  for (let i = 0; i < ticks; i++) {
-    const a = startAngle + (2 * Math.PI * i) / ticks;
-    const done = i / ticks <= pct;
-    const ir = ringR - ringW;
-    const or = ringR + ringW;
-    ctx.beginPath();
-    ctx.moveTo(cx + ir * Math.cos(a), ringY + ir * Math.sin(a));
-    ctx.lineTo(cx + or * Math.cos(a), ringY + or * Math.sin(a));
-    ctx.strokeStyle = done ? 'rgba(0,0,0,0.2)' : T.grid;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-
-  // Hours / mins
-  const h = Math.floor(msLeft / 3600000) % 24;
-  const m = Math.floor(msLeft / 60000) % 60;
-  ctx.fillStyle = T.sub;
-  ctx.font = `300 ${W * 0.022}px 'DM Mono', monospace`;
-  ctx.fillText(`${h}h ${m}m until midnight`, cx, H * 0.92);
-}
-
-// ── TIMESTAMP FOOTER ──
-function drawTimestamp(ctx, W, H, T, now, hires) {
-  const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-  const dateStr = now.toLocaleDateString('en', {weekday:'long', month:'long', day:'numeric'});
-
-  ctx.fillStyle = T.sub;
-  ctx.font = `300 ${W * 0.02}px 'DM Mono', monospace`;
-  ctx.textAlign = 'center';
-  ctx.fillText(`generated ${dateStr} at ${timeStr}`, W / 2, H * 0.975);
-}
-
-// ── HELPERS ──
-function roundRect(ctx, x, y, w, h, r) {
-  r = Math.min(r, w / 2, h / 2);
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
-}
-
-function getDayOfYear(date) {
-  const start = new Date(date.getFullYear(), 0, 0);
-  const diff = date - start;
-  return Math.floor(diff / (24 * 3600 * 1000));
-}
-
-function lerpColor(a, b, t) {
-  const pa = parseHex(a), pb = parseHex(b);
-  const r = Math.round(pa.r + (pb.r - pa.r) * t);
-  const g = Math.round(pa.g + (pb.g - pa.g) * t);
-  const bl = Math.round(pa.b + (pb.b - pa.b) * t);
-  return `rgb(${r},${g},${bl})`;
-}
-
-function lighten(hex, amount) {
-  const c = parseHex(hex);
-  const r = Math.min(255, Math.max(0, Math.round(c.r + 255 * amount)));
-  const g = Math.min(255, Math.max(0, Math.round(c.g + 255 * amount)));
-  const b = Math.min(255, Math.max(0, Math.round(c.b + 255 * amount)));
-  return `rgb(${r},${g},${b})`;
-}
-
-function parseHex(hex) {
-  hex = hex.replace('#', '');
-  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
-  return { r: parseInt(hex.slice(0,2),16), g: parseInt(hex.slice(2,4),16), b: parseInt(hex.slice(4,6),16) };
-}
-
-// ── DOWNLOAD ──
-function downloadWallpaper() {
-  const { w, h } = getExportDims();
-  const exp = document.getElementById('exportCanvas');
-  exp.width = w; exp.height = h;
-  drawWallpaper(exp.getContext('2d'), w, h, true);
-  
-  const a = document.createElement('a');
-  a.download = `mindful-wallpaper-${currentType}-${w}x${h}.png`;
-  a.href = exp.toDataURL('image/png');
-  a.click();
-}
-</script>
-
 </body>
 </html>
