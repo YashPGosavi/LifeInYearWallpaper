@@ -96,42 +96,23 @@ const DEVICES = {
 
 // ══ INIT ══
 window.addEventListener("DOMContentLoaded", () => {
-  const today = new Date();
-  document.getElementById("goalStart").value = today
-    .toISOString()
-    .split("T")[0];
-  const d = new Date();
-  d.setMonth(d.getMonth() + 3);
-  document.getElementById("goalDate").value = d.toISOString().split("T")[0];
-  applyUrlParams();
-  startClock();
-  startCountdown();
-  render();
-  setInterval(render, 60000);
-
   const p = new URLSearchParams(window.location.search);
-  if (p.get("download") === "1") {
-    setTimeout(() => {
-      render();
-      downloadWallpaper();
-    }, 300);
-  }
 
-  // VIEW MODE — skip UI
+  // VIEW MODE — skip UI completely
   if (p.get("view") === "1") {
     applyUrlParams();
 
     const { w, h } = getExportDims();
     const portrait = !["mac", "windows"].includes(currentDevice);
 
-    const exp = document.getElementById("exportCanvas");
-    exp.width = w;
-    exp.height = h;
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
 
-    drawWallpaper(exp.getContext("2d"), w, h, true, portrait);
+    drawWallpaper(canvas.getContext("2d"), w, h, true, portrait);
 
     const img = new Image();
-    img.src = exp.toDataURL("image/png");
+    img.src = canvas.toDataURL("image/png");
 
     document.body.innerHTML = "";
     document.body.style.margin = "0";
@@ -146,14 +127,39 @@ window.addEventListener("DOMContentLoaded", () => {
     img.style.width = "auto";
     img.style.height = "auto";
     img.style.maxWidth = "100%";
-    img.style.maxHeight = "100vh";
+    img.style.height = "100vh";
+img.style.objectFit = "contain";
     img.style.display = "block";
-    img.style.margin = "auto";
 
     return;
+  }
 
+  // NORMAL APP
+  const today = new Date();
+  document.getElementById("goalStart").value = today
+    .toISOString()
+    .split("T")[0];
+
+  const d = new Date();
+  d.setMonth(d.getMonth() + 3);
+  document.getElementById("goalDate").value =
+    d.toISOString().split("T")[0];
+
+  applyUrlParams();
+  startClock();
+  startCountdown();
+  render();
+  setInterval(render, 60000);
+
+  if (p.get("download") === "1") {
+    setTimeout(() => {
+      render();
+      downloadWallpaper();
+    }, 300);
   }
 });
+
+
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeInstall();
 });
@@ -784,7 +790,8 @@ function downloadWallpaper(mode = "download") {
     img.style.width = "auto";
     img.style.height = "auto";
     img.style.maxWidth = "100%";
-    img.style.maxHeight = "100vh";
+    img.style.height = "100vh";
+img.style.objectFit = "contain";
     img.style.display = "block";
     img.style.margin = "auto";
 
