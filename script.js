@@ -112,9 +112,16 @@ window.addEventListener("DOMContentLoaded", () => {
   const p = new URLSearchParams(window.location.search);
   if (p.get("download") === "1") {
     setTimeout(() => {
-        render();
-        downloadWallpaper();
+      render();
+      downloadWallpaper();
     }, 300);
+  }
+
+  if (p.get("view") === "1") {
+    setTimeout(() => {
+      render();
+      downloadWallpaper("view");
+    }, 200);
   }
 });
 document.addEventListener("keydown", (e) => {
@@ -124,12 +131,12 @@ document.addEventListener("keydown", (e) => {
 // ══ CLOCK ══
 function startClock() {
   const tick = () =>
-    (document.getElementById("liveTime").textContent =
-      new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      }));
+  (document.getElementById("liveTime").textContent =
+    new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }));
   tick();
   setInterval(tick, 1000);
 }
@@ -721,16 +728,43 @@ function drawTimestamp(ctx, W, H, T, now) {
 }
 
 // ══ DOWNLOAD ══
-function downloadWallpaper() {
+function downloadWallpaper(mode = "download") {
   const { w, h } = getExportDims();
   const portrait = !["mac", "windows"].includes(currentDevice);
   const exp = document.getElementById("exportCanvas");
   exp.width = w;
   exp.height = h;
   drawWallpaper(exp.getContext("2d"), w, h, true, portrait);
+
+  const data = exp.toDataURL("image/png");
+  if (mode === "view") {
+    const img = new Image();
+    img.src = data;
+
+    document.body.innerHTML = "";
+    document.body.style.margin = "0";
+    document.body.style.background = "#000";
+    document.body.style.display = "flex";
+    document.body.style.alignItems = "center";
+    document.body.style.justifyContent = "center";
+    document.body.style.height = "100vh";
+
+    document.body.appendChild(img);
+
+    img.style.width = "auto";
+    img.style.height = "auto";
+    img.style.maxWidth = "100%";
+    img.style.maxHeight = "100vh";
+    img.style.display = "block";
+    img.style.margin = "auto";
+
+    return;
+  }
+
+
   const a = document.createElement("a");
   a.download = `mindful-wallpaper-${currentType}-${w}x${h}.png`;
-  a.href = exp.toDataURL("image/png");
+  a.href = data;
   a.click();
 }
 
@@ -765,7 +799,7 @@ function buildWallpaperUrl() {
     theme: currentTheme,
     w,
     h,
-    download: 1
+    view: 1
   });
   if (currentType === "life") {
     params.set("dob", document.getElementById("dob").value);
