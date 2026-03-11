@@ -115,7 +115,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Make the page become the image itself
     document.open();
-    document.write(`<img src="${data}" style="margin:0;display:block;width:100vw;height:100vh;object-fit:contain;background:#000;">`);
+    document.write(
+      `<img src="${data}" style="margin:0;display:block;width:100vw;height:100vh;object-fit:contain;background:#000;">`,
+    );
     document.close();
 
     return;
@@ -129,8 +131,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const d = new Date();
   d.setMonth(d.getMonth() + 3);
-  document.getElementById("goalDate").value =
-    d.toISOString().split("T")[0];
+  document.getElementById("goalDate").value = d.toISOString().split("T")[0];
 
   applyUrlParams();
   startClock();
@@ -145,7 +146,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 300);
   }
 });
-
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeInstall();
@@ -240,9 +240,25 @@ function activateCustom() {
   render();
 }
 function onCustomAccent(val) {
-  THEMES.custom.fill = val;
+  THEMES.custom = generateTheme(val);
   activateCustom();
 }
+
+function generateTheme(accent) {
+  return {
+    bg1: darken(accent, 0.45),
+    bg2: darken(accent, 0.35),
+    grid: darken(accent, 0.25),
+
+    fill: accent,
+
+    text: lighten(accent, 0.35),
+    sub: darken(accent, 0.15),
+
+    empty: darken(accent, 0.3),
+  };
+}
+
 function applyCustomTheme() {
   THEMES.custom = {
     bg1: document.getElementById("cp_bg1").value,
@@ -318,7 +334,7 @@ function drawLifeCalendar(ctx, W, H, T, now, portrait) {
   const weekLived = Math.floor((now - dob) / (7 * 24 * 3600 * 1000));
   const pct = Math.min(1, weekLived / totalWeeks);
   const pad = W * 0.08;
-  const titleY = portrait ? H * 0.1 : H * 0.13;
+  const titleY = portrait ? H * 0.34 : H * 0.13;
 
   ctx.fillStyle = T.text;
   ctx.textAlign = "center";
@@ -333,7 +349,7 @@ function drawLifeCalendar(ctx, W, H, T, now, portrait) {
     titleY + W * (portrait ? 0.055 : 0.038),
   );
 
-  const gridTop = portrait ? H * 0.38 : H * 0.30;
+  const gridTop = portrait ? H * 0.38 : H * 0.3;
   const gridBot = portrait ? H * 0.88 : H * 0.82;
   const gridH = gridBot - gridTop,
     gridW = W - pad * 2;
@@ -412,7 +428,7 @@ function drawYearCalendar(ctx, W, H, T, now, portrait) {
   const dayOfYear = getDayOfYear(now);
   const pct = dayOfYear / totalDays;
   const pad = W * 0.08;
-  const titleY = portrait ? H * 0.08 : H * 0.12;
+  const titleY = portrait ? H * 0.34 : H * 0.13;
 
   ctx.fillStyle = T.text;
   ctx.textAlign = "center";
@@ -426,7 +442,7 @@ function drawYearCalendar(ctx, W, H, T, now, portrait) {
     titleY + W * (portrait ? 0.055 : 0.038),
   );
 
-  const gridTop = portrait ? H * 0.38 : H * 0.30;
+  const gridTop = portrait ? H * 0.38 : H * 0.3;
   const gridBot = portrait ? H * 0.9 : H * 0.83;
   const gridW = W - pad * 2,
     gridH = gridBot - gridTop;
@@ -589,7 +605,7 @@ function drawGoalCalendar(ctx, W, H, T, now, portrait) {
   const cx = W / 2;
 
   // ── Section 1: Header (top ~18%) ──────────────────────
-  const labelY = portrait ? H * 0.09 : H * 0.1;
+  const labelY = portrait ? H * 0.34 : H * 0.1;
   ctx.textAlign = "center";
 
   ctx.fillStyle = T.sub;
@@ -610,7 +626,7 @@ function drawGoalCalendar(ctx, W, H, T, now, portrait) {
   ctx.stroke();
 
   // ── Section 2: Big number + label (middle) ─────────────
-  const numY = portrait ? H * 0.38 : H * 0.42;
+  const numY = portrait ? H * 0.45 : H * 0.42;
   ctx.fillStyle = T.fill;
   ctx.font = `300 ${W * (portrait ? 0.24 : 0.19)}px 'Cormorant Garamond', serif`;
   ctx.fillText(String(daysLeft), cx, numY);
@@ -786,7 +802,6 @@ function downloadWallpaper(mode = "download") {
     return;
   }
 
-
   const a = document.createElement("a");
   a.download = `mindful-wallpaper-${currentType}-${w}x${h}.png`;
   a.href = data;
@@ -824,7 +839,7 @@ function buildWallpaperUrl() {
     theme: currentTheme,
     w,
     h,
-    view: 1
+    view: 1,
   });
   if (currentType === "life") {
     params.set("dob", document.getElementById("dob").value);
@@ -938,6 +953,13 @@ function lighten(hex, amount) {
     cl = (v) => Math.min(255, Math.max(0, Math.round(v)));
   return `rgb(${cl(c.r + 255 * amount)},${cl(c.g + 255 * amount)},${cl(c.b + 255 * amount)})`;
 }
+
+function darken(hex, amount) {
+  const c = parseHex(hex),
+    cl = (v) => Math.min(255, Math.max(0, Math.round(v)));
+  return `rgb(${cl(c.r - 255 * amount)},${cl(c.g - 255 * amount)},${cl(c.b - 255 * amount)})`;
+}
+
 function parseHex(hex) {
   hex = hex.replace("#", "");
   if (hex.length === 3)
